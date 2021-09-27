@@ -1,10 +1,10 @@
-name: build
+name: windows-luajit-32
 
 on: 
   push:
     paths: 
       - build/**
-      - .github/workflows/build.yml
+      - .github/workflows/windows-luajit-32.yml
 
 jobs:
 windows-luajit-32:
