@@ -1,0 +1,35 @@
+name: ios
+
+on: 
+  push:
+    paths: 
+      - build/**
+      - .github/workflows/ios.yml
+
+jobs:
+  ios:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          cd build
+          ./make_ios_lua54.sh
+          ./make_ios_lua53.sh
+          ./make_ios_luajit.sh
+      - name: Upload
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./build/plugin_lua54/**/*
+          name: plugin_lua54
+      - name: Upload53
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./build/plugin_lua53/**/*
+          name: plugin_lua53   
+      - name: UploadJit
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./build/plugin_luajit/**/*
+          name: plugin_luajit
