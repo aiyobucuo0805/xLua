@@ -145,6 +145,15 @@ YASIO_LUA_API int luaopen_yasio(lua_State* L)
         return !is_packet_empty(pkt)
                    ? std::unique_ptr<yasio::ibstream>(!copy ? new yasio::ibstream(forward_packet((packet_t &&) pkt)) : new yasio::ibstream(forward_packet(pkt)))
                    : std::unique_ptr<yasio::ibstream>{};
+      }, "fast_packet", 
+      [](io_event* ev, sol::variadic_args args) {
+        bool copy = false;
+        if (args.size() >= 2)
+          copy = args[1];
+        auto& pkt = ev->packet();
+        return !is_packet_empty(pkt)
+                   ? std::unique_ptr<yasio::fast_ibstream>(!copy ? new yasio::fast_ibstream(forward_packet((packet_t &&) pkt)) : new yasio::fast_ibstream(forward_packet(pkt)))
+                   : std::unique_ptr<yasio::fast_ibstream>{};
       },
       "cindex", &io_event::cindex, "transport", &io_event::transport
 #  if !defined(YASIO_MINIFY_EVENT)
@@ -521,6 +530,14 @@ YASIO_LUA_API int luaopen_yasio(lua_State* L)
                                                                                              !copy ? new yasio::ibstream(forward_packet((packet_t &&) pkt))
                                                                                                    : new yasio::ibstream(forward_packet(pkt)))
                                                                                        : std::unique_ptr<yasio::ibstream>{};
+                                                        })
+                                     .addStaticFunction("fast_packet",
+                                                        [](io_event* ev, bool /*raw*/, bool copy) {
+                                                          auto& pkt = ev->packet();
+                                                          return !is_packet_empty(pkt) ? std::unique_ptr<yasio::fast_ibstream>(
+                                                                                             !copy ? new yasio::fast_ibstream(forward_packet((packet_t &&) pkt))
+                                                                                                   : new yasio::fast_ibstream(forward_packet(pkt)))
+                                                                                       : std::unique_ptr<yasio::fast_ibstream>{};
                                                         })
                                      .addFunction("cindex", &io_event::cindex)
                                      .addFunction("transport", &io_event::transport)
