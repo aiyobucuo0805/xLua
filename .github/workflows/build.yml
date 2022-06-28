@@ -169,7 +169,7 @@ jobs:
         with:
           arch: x86
       - name: Build Luajit
-        run: |
+        run:
           cd build
           .\make_win32_luajit.bat  
       - name: UploadJit
